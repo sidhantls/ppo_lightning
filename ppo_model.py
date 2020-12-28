@@ -168,7 +168,7 @@ class PPO(pl.LightningModule):
 
         for step in range(self.steps_per_epoch):
             pi, action, log_prob, value = self.agent(self.state, self.device)
-            next_state, reward, done, _ = self.env.step(action.numpy())
+            next_state, reward, done, _ = self.env.step(action.cpu().numpy())
 
             self.batch_states.append(self.state)
             self.batch_actions.append(action)
