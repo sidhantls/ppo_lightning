@@ -125,7 +125,7 @@ class ActorCriticAgent(object):
 
         value = self.critic_net(state)
 
-        return pi, actions.cpu(), log_p.cpu(), value.cpu()
+        return pi, actions, log_p, value
 
     def get_log_prob(self,
                      pi: Union[Categorical, Normal],
