@@ -45,6 +45,7 @@ class PPO(pl.LightningModule):
         max_episode_len: float = 200,
         batch_size: int = 512,
         steps_per_epoch: int = 2048,
+        nb_optim_iters: int = 4,
         clip_ratio: float = 0.2,
     ) -> None:
 
@@ -58,6 +59,7 @@ class PPO(pl.LightningModule):
             max_episode_len: maximum number interactions (actions) in an episode
             batch_size:  batch_size when training network- can simulate number of policy updates performed per epoch
             steps_per_epoch: how many action-state pairs to rollout for trajectory collection per epoch
+            nb_optim_iters: how many steps of gradient descent to perform on each batch
             clip_ratio: hyperparameter for clipping in the policy objective
         """
         super().__init__()
@@ -69,6 +71,7 @@ class PPO(pl.LightningModule):
         self.lr_actor = lr_actor
         self.lr_critic = lr_critic
         self.steps_per_epoch = steps_per_epoch
+        self.nb_optim_iters = nb_optim_iters
         self.batch_size = batch_size
         self.gamma = gamma
         self.lam = lam
@@ -253,13 +256,13 @@ class PPO(pl.LightningModule):
         self.log("avg_ep_reward", self.avg_ep_reward, prog_bar=True, on_step=False, on_epoch=True)
         self.log("avg_reward", self.avg_reward, prog_bar=True, on_step=False, on_epoch=True)
 
-        if optimizer_idx == 0:
+        if optimizer_idx % 2 == 0:
             loss_actor = self.actor_loss(state, action, old_logp, qval, adv)
             self.log('loss_actor', loss_actor, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
             return loss_actor
 
-        elif optimizer_idx == 1:
+        else:
             loss_critic = self.critic_loss(state, action, old_logp, qval, adv)
             self.log('loss_critic', loss_critic, on_step=False, on_epoch=True, prog_bar=False, logger=True)
 
@@ -270,7 +273,13 @@ class PPO(pl.LightningModule):
         optimizer_actor = optim.Adam(self.actor.parameters(), lr=self.lr_actor)
         optimizer_critic = optim.Adam(self.critic.parameters(), lr=self.lr_critic)
 
-        return [optimizer_actor, optimizer_critic]
+        # to run multple steps of gradient descent
+        optimizers = []
+        for i in range(self.nb_optim_iters):
+            optimizers.append(optimizer_actor)
+            optimizers.append(optimizer_critic)
+
+        return optimizers
 
     def _dataloader(self) -> DataLoader:
         """Initialize the Replay Buffer dataset used for retrieving experiences"""
