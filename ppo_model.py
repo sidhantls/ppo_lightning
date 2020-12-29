@@ -281,7 +281,3 @@ class PPO(pl.LightningModule):
     def train_dataloader(self) -> DataLoader:
         """Get train loader"""
         return self._dataloader()
-
-    def get_device(self, batch) -> str:
-        """Retrieve device currently being used by minibatch"""
-        return batch[0][0][0].device.index if self.on_gpu else "cpu"
