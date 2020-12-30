@@ -256,13 +256,13 @@ class PPO(pl.LightningModule):
         self.log("avg_ep_reward", self.avg_ep_reward, prog_bar=True, on_step=False, on_epoch=True)
         self.log("avg_reward", self.avg_reward, prog_bar=True, on_step=False, on_epoch=True)
 
-        if optimizer_idx % 2 == 0:
+        if optimizer_idx == 0:
             loss_actor = self.actor_loss(state, action, old_logp, qval, adv)
             self.log('loss_actor', loss_actor, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
             return loss_actor
 
-        else:
+        elif optimizer_idx == 1:
             loss_critic = self.critic_loss(state, action, old_logp, qval, adv)
             self.log('loss_critic', loss_critic, on_step=False, on_epoch=True, prog_bar=False, logger=True)
 
@@ -273,13 +273,11 @@ class PPO(pl.LightningModule):
         optimizer_actor = optim.Adam(self.actor.parameters(), lr=self.lr_actor)
         optimizer_critic = optim.Adam(self.critic.parameters(), lr=self.lr_critic)
 
-        # to run multple steps of gradient descent
-        optimizers = []
-        for i in range(self.nb_optim_iters):
-            optimizers.append(optimizer_actor)
-            optimizers.append(optimizer_critic)
+        return optimizer_actor, optimizer_critic
 
-        return optimizers
+    def optimizer_step(self, *args, **kwargs):
+        for i in range(self.nb_optim_iters):
+            super().optimizer_step(*args, **kwargs)
 
     def _dataloader(self) -> DataLoader:
         """Initialize the Replay Buffer dataset used for retrieving experiences"""
