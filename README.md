@@ -7,6 +7,7 @@ of other RL algorithms in [PyTorch Lightning Bolts](https://github.com/PyTorchLi
 ## Details 
 This PPO implemenation works with both discrete and continous action-space environments via OpenAI Gym. Implements PPO Actor-Critic Style. Continous actor uses normal distribution to predict actions wheres discrete actor uses multinomial distribution (Categorical distribution in Torch) to predict actions. 
 
+GPU training is supported. It can be enabled normally through PyTorch Lightning itself: `trainer = Trainer(gpus=-1)`. Note: If default MLP actor and critic networks are being used, GPU training is likely to be slower than CPU because of the overhead of pushing each sample to device during trajectory collection. If the user is using deep networks for actor or critic, then GPU speedups can be realized.  
 
 ## Requirements 
 * Python3 >= 3.6 
