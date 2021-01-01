@@ -5,7 +5,8 @@ This implementation is inspired by OpenAI baselines for [PPO](https://github.com
 of other RL algorithms in [PyTorch Lightning Bolts](https://github.com/PyTorchLightning/pytorch-lightning-bolts/)
 
 ## Details 
-This PPO implemenation works with both discrete and continous action-space environments via OpenAI Gym. 
+This PPO implemenation works with both discrete and continous action-space environments via OpenAI Gym. Implements PPO Actor-Critic Style. Continous actor uses normal distribution to predict actions wheres discrete actor uses multinomial distribution (Categorical distribution in Torch) to predict actions. 
+
 
 ## Requirements 
 * Python3 >= 3.6 
