@@ -103,9 +103,9 @@ class PPO(pl.LightningModule):
 
         self.ep_rewards = []
         self.ep_values = []
+        self.epoch_rewards = []
 
-        self.done_episodes = 0
-        self.epoch_rewards = 0
+        self.episode_step = 0
         self.avg_ep_reward = 0
         self.avg_ep_len = 0
         self.avg_reward = 0
@@ -173,6 +173,8 @@ class PPO(pl.LightningModule):
             pi, action, log_prob, value = self.agent(self.state, self.device)
             next_state, reward, done, _ = self.env.step(action.cpu().numpy())
 
+            self.episode_step += 1
+
             self.batch_states.append(self.state)
             self.batch_actions.append(action)
             self.batch_logp.append(log_prob)
@@ -191,19 +193,21 @@ class PPO(pl.LightningModule):
                     with torch.no_grad():
                         _, _, _, value = self.agent(self.state, self.device)
                         last_value = value.item()
+                        steps_before_cutoff = self.episode_step
                 else:
                     last_value = 0
+                    steps_before_cutoff = 0
 
                 # discounted cumulative reward
                 self.batch_qvals += self.discount_rewards(self.ep_rewards + [last_value], self.gamma)[:-1]
                 # advantage
                 self.batch_adv += self.calc_advantage(self.ep_rewards, self.ep_values, last_value)
                 # logs
-                self.done_episodes += 1
-                self.epoch_rewards += np.sum(self.ep_rewards)
+                self.epoch_rewards.append(sum(self.ep_rewards))
                 # reset params
                 self.ep_rewards = []
                 self.ep_values = []
+                self.episode_step = 0
                 self.state = torch.FloatTensor(self.env.reset())
 
             if epoch_end:
@@ -220,12 +224,21 @@ class PPO(pl.LightningModule):
                 self.batch_logp.clear()
                 self.batch_qvals.clear()
 
-                self.avg_ep_reward = self.epoch_rewards / self.done_episodes
-                self.avg_reward = self.epoch_rewards / self.steps_per_epoch
-                self.avg_ep_len = self.steps_per_epoch / self.done_episodes
+                # logging
+                self.avg_reward = sum(self.epoch_rewards) / self.steps_per_epoch
 
-                self.epoch_rewards = 0
-                self.done_episodes = 0
+                # if epoch ended upbruptly, exlude last cut-short episode to prevent stats skewness
+                if not done:
+                    total_epoch_reward = sum(self.epoch_rewards[:-1])
+                    nb_episodes = len(self.epoch_rewards) - 1
+                else:
+                    total_epoch_reward = sum(self.epoch_rewards)
+                    nb_episodes = len(self.epoch_rewards)
+
+                self.avg_ep_reward = total_epoch_reward / nb_episodes
+                self.avg_ep_len = (self.steps_per_epoch - steps_before_cutoff) / nb_episodes
+
+                self.epoch_rewards.clear()
 
     def actor_loss(self, state, action, logp_old, qval, adv) -> torch.Tensor:
         pi, _ = self.actor(state)
