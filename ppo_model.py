@@ -289,9 +289,9 @@ class PPO(pl.LightningModule):
         return optimizer_actor, optimizer_critic
 
     def optimizer_step(self, *args, **kwargs):
-        """ 
+        """
         Run 'nb_optim_iters' number of iterations of gradient descent on actor and critic
-        for each data sample. 
+        for each data sample.
         """
         for i in range(self.nb_optim_iters):
             super().optimizer_step(*args, **kwargs)
