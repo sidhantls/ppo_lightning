@@ -5,7 +5,7 @@ from torch import nn
 from torch.distributions import Categorical, Normal
 
 
-def create_mlp(input_shape: Tuple[int], n_actions: int, hidden_sizes: list = [64, 64]):
+def create_mlp(input_shape: Tuple[int], n_actions: int, hidden_sizes: list = [128, 128]):
     """
     Simple Multi-Layer Perceptron network
     """
