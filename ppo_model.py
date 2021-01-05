@@ -265,6 +265,10 @@ class PPO(pl.LightningModule):
             loss
         """
         state, action, old_logp, qval, adv = batch
+
+        # normalize advantages
+        adv = (adv - adv.mean())/adv.std()
+
         self.log("avg_ep_len", self.avg_ep_len, prog_bar=True, on_step=False, on_epoch=True)
         self.log("avg_ep_reward", self.avg_ep_reward, prog_bar=True, on_step=False, on_epoch=True)
         self.log("avg_reward", self.avg_reward, prog_bar=True, on_step=False, on_epoch=True)
