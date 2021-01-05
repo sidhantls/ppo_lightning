@@ -18,7 +18,7 @@ GPU training is supported through Lightning, `trainer = Trainer(gpus=-1)`. Note:
 ## Results 
 Results with default parameters on some enviorntments. PyBullet's gym envirnoment was used instead of MuJoCo for Hopper and Walker. 
 
-Parameters:\s\s
+Parameters:  
 `batch_size = 512`, `nb_optim_iters = 4`, `clip_ratio = 2`, `gamma = 0.99`, 
 `lam = 0.95`, `lr_actor = 3e-4`, `lr_critic = 1e-3`
 
