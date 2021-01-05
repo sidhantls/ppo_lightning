@@ -16,8 +16,11 @@ GPU training is supported. It can be enabled normally through PyTorch Lightning 
 * PyTorch Lightning 
 
 ## Results 
+Results with default parameters on categorical and continous action spaces. PyBullet's envirnoment was used instead of MuJoCo for Hopper and Walker. 
 
-<img src="results/CartPole-v0.JPG" width="400px">
+Parameters: 
+`batch_size = 512`, `nb_optim_iters = 4`,`clip_ratio = 2`, `gamma = 0.99`, 
+`lam = 0.95`, `lr_actor = 3e-4`, `lr_critic = 1e-3`
 
 | CartPole-v0    | HopperBulletEnv-v0 | Walker2DBulletEnv-v0 |
 | -------------- | -------------- | -------------- |  
