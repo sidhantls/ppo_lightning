@@ -16,4 +16,9 @@ GPU training is supported. It can be enabled normally through PyTorch Lightning 
 * PyTorch Lightning 
 
 ## Results 
-TBA
+
+<img src="results/CartPole-v0.jpg" width="400px">
+
+| CartPole-v0    | HopperBulletEnv-v0 |
+| -------------- | -------------- |
+| ![](results/CartPole-v0.jpg) | ![](results/HopperBulletEnv-v0.jpg) |
