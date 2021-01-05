@@ -7,7 +7,7 @@ of other RL algorithms in [PyTorch Lightning Bolts](https://github.com/PyTorchLi
 ## Details 
 This PPO implemenation works with both discrete and continous action-space environments via OpenAI Gym. Implements PPO Actor-Critic style. 
 
-GPU training is supported through Lightning `trainer = Trainer(gpus=-1)`. Note: If the user is using deeper networks for actor or critic, instead of the default MLP, only then will GPU speedups likely be realized.  
+GPU training is supported through Lightning, `trainer = Trainer(gpus=-1)`. Note: If the user is using deeper networks for actor or critic, instead of the default MLP, only then will GPU speedups likely be realized.  
 
 ## Requirements 
 * Python3 >= 3.6 
@@ -16,4 +16,12 @@ GPU training is supported through Lightning `trainer = Trainer(gpus=-1)`. Note: 
 * PyTorch Lightning 
 
 ## Results 
-TBA
+Results with default parameters on some enviorntments. PyBullet's gym envirnoment was used instead of MuJoCo for Hopper and Walker. 
+
+Parameters:\s\s
+`batch_size = 512`, `nb_optim_iters = 4`, `clip_ratio = 2`, `gamma = 0.99`, 
+`lam = 0.95`, `lr_actor = 3e-4`, `lr_critic = 1e-3`
+
+| CartPole-v0    | HopperBulletEnv-v0 | Walker2DBulletEnv-v0 |
+| -------------- | -------------- | -------------- |  
+| ![](results/CartPole-v0.JPG) | ![](results/HopperBulletEnv-v0.JPG) | ![](results/Walker2DBulletEnv-v0.JPG) |
