@@ -8,7 +8,6 @@ import torch
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from torch.optim.optimizer import Optimizer
-import numpy as np
 
 try:
     import gym
