@@ -41,7 +41,7 @@ class PPO(pl.LightningModule):
         lam: float = 0.95,
         lr_actor: float = 3e-4,
         lr_critic: float = 1e-3,
-        max_episode_len: float = 200,
+        max_episode_len: float = 1000,
         batch_size: int = 512,
         steps_per_epoch: int = 2048,
         nb_optim_iters: int = 4,
